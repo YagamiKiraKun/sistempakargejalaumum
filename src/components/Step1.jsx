@@ -1,23 +1,20 @@
-// Step1.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import './Step1.css'; // Import CSS untuk Step1
 
 const Step1 = ({ onNext }) => {
     const [timbulGejala, setTimbulGejala] = useState("");
     const [adaptasiTubuh, setAdaptasiTubuh] = useState("");
     const [isDisabled, setIsDisabled] = useState(true);
 
-    // Handle perubahan input untuk memvalidasi
-    const handleChange = () => {
-        if (timbulGejala && adaptasiTubuh) {
-            setIsDisabled(false);
-        } else {
-            setIsDisabled(true);
-        }
-    };
+ 
+    useEffect(() => {
+        setIsDisabled(!(timbulGejala && adaptasiTubuh));
+    }, [timbulGejala, adaptasiTubuh]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         let responTubuh = "Tidak diketahui";
+
         if (timbulGejala === "awal" && adaptasiTubuh === "imun") {
             responTubuh = "Langsung";
         } else if (timbulGejala === "awal" && adaptasiTubuh === "inflamasi") {
@@ -30,25 +27,28 @@ const Step1 = ({ onNext }) => {
     };
 
     return (
-        <div>
+        <div className="step1-container">
             <h2>1️⃣ Input Gejala Awal</h2>
-            <form onSubmit={handleSubmit}>
-                <label>Timbul Gejala:</label>
-                <select onChange={(e) => { setTimbulGejala(e.target.value); handleChange(); }}>
-                    <option value="">Pilih</option>
-                    <option value="awal">Awal</option>
-                    <option value="lama">Lama</option>
-                </select>
 
-                <label>Adaptasi Tubuh:</label>
-                <select onChange={(e) => { setAdaptasiTubuh(e.target.value); handleChange(); }}>
-                    <option value="">Pilih</option>
-                    <option value="imun">Imun</option>
-                    <option value="inflamasi">Inflamasi</option>
-                </select>
+            <div className="form-container">
+                <form onSubmit={handleSubmit}>
+                    <label>Timbul Gejala:</label>
+                    <select value={timbulGejala} onChange={(e) => setTimbulGejala(e.target.value)}>
+                        <option value="">Pilih</option>
+                        <option value="awal">Awal</option>
+                        <option value="lama">Lama</option>
+                    </select>
 
-                <button type="submit" disabled={isDisabled}>Lanjut</button>
-            </form>
+                    <label>Adaptasi Tubuh:</label>
+                    <select value={adaptasiTubuh} onChange={(e) => setAdaptasiTubuh(e.target.value)}>
+                        <option value="">Pilih</option>
+                        <option value="imun">Imun</option>
+                        <option value="inflamasi">Inflamasi</option>
+                    </select>
+
+                    <button type="submit" disabled={isDisabled}>Lanjut</button>
+                </form>
+            </div>
         </div>
     );
 };

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import './Step2.css';
 
 const Step2 = ({ responTubuh, onNext }) => {
     if (!onNext) {
@@ -27,7 +28,7 @@ const Step2 = ({ responTubuh, onNext }) => {
     };
 
     return (
-        <div>
+        <div className="step2-container">
             <h2>2️⃣ Input Batuk & Sakit</h2>
             <p>Respon Tubuh: <b>{responTubuh}</b></p>
 

@@ -1,0 +1,80 @@
+/* Step1.css */
+.step1-container {
+    font-family: Arial, sans-serif;
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #efefef;
+    width: 400px;
+    height: 400px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    animation: slideIn 0.5s ease-in-out;
+}
+
+h2 {
+    font-size: 1.5em;
+    color: #2d3e50;
+    margin-bottom: 20px;
+}
+
+/* Animasi untuk efek masuk */
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Styling untuk form */
+form {
+    margin-top: 20px;
+}
+
+label {
+    font-size: 1.1em;
+    color: #000000;
+    display: block;
+    margin: 10px 0 5px;
+}
+
+select {
+    padding: 8px;
+    font-size: 1em;
+    margin-bottom: 15px;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #c6c6c6;
+    transition: all 0.3s ease-in-out;
+    color: #333;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 1.1em;
+    color: white;
+    background-color: #1f458c;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+    background-color: #2f4172;
+}
+
+button:focus {
+    outline: none;
+}

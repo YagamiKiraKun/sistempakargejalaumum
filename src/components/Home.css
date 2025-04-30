@@ -1,18 +1,40 @@
-.home-container {
-    padding: 120px;
-    text-align: center;
+body {
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to bottom right, #cbe8ff, #e0f0ff)!important;
     font-family: Arial, sans-serif;
+    min-height: 100vh;
+}
+
+.home-container {
+    padding: 80px 20px;
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    
 }
 
 .home-title {
-    font-size: 2.5rem;
+    font-size: 2rem;
     margin-bottom: 10px;
+    color: rgb(2, 31, 90);
+    font-family: Verdana;
 }
 
 .home-description {
-    font-size: 1.2rem;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: rgb(2, 31, 90);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: 'Trebuchet MS';
+}
+
+.home-instruction {
+    color: rgb(2, 31, 90);
+    font-size: 0.95rem;
     margin-bottom: 30px;
-    color: #555;
 }
 
 .disease-cards {
@@ -24,13 +46,23 @@
 }
 
 .card {
-    background-color: #afafaf;
-    border: 0px solid #ddd;
-    border-radius: 5px;
+    padding: 30px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
     width: 300px;
-    padding: 80px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 500px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    font-family: 'Trebuchet MS';
+}
+
+.card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 .card h3 {
@@ -39,25 +71,27 @@
 }
 
 .card ul {
-    padding-left: 10px; 
+    padding-left: 18px;
     margin: 0;
 }
 
 .card li {
     margin-bottom: 8px;
+    font-size: 0.95rem;
+    color: #000000;
 }
 
 .start-button {
-    padding: 12px 30px;
+    padding: 14px 32px;
     font-size: 1rem;
-    background-color: #4CAF50;
+    background-color: #4c6aaf;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .start-button:hover {
-    background-color: #45a049;
+    background-color: #2f4172;
 }
