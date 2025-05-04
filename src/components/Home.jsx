@@ -1,9 +1,11 @@
 import React from 'react';
 import './Home.css';
+import dokterIcon from '../Assets/dokter.webp';
 
 const Home = ({ onStart }) => {
     return (
         <div className="home-container">
+            <img src={dokterIcon} alt="Icon Orang" className="icon" />
             <h1 className="home-title">Selamat Datang di Sistem Pakar Diagnosa Penyakit Umum</h1>
             
             <p className="home-description">

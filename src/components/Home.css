@@ -6,6 +6,15 @@ body {
     min-height: 100vh;
 }
 
+.icon {
+    position: fixed;  /* Gunakan fixed supaya tetap di posisi yang sama meskipun scroll */
+    left: 20px;       /* Mengatur posisi gambar dari kiri */
+    bottom: 20px;     /* Mengatur posisi gambar dari bawah */
+    width: 300px;      /* Ukuran gambar, sesuaikan sesuai kebutuhan */
+    height: auto;     /* Menjaga rasio gambar */
+    z-index: 1000;    /* Supaya gambar berada di atas konten lain */
+}
+
 .home-container {
     padding: 80px 20px;
     text-align: center;
