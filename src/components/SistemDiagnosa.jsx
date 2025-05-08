@@ -6,38 +6,32 @@ class SistemDiagnosa {
   constructor() {
     this.backward = new Backward(rules);
     this.cfEngine = new CertaintyFactor();
-    this.trace = []; // Jejak eksekusi sistem
+    this.trace = []; 
   }
 
-  // Reset sistem
   reset() {
     this.backward.reset();
     this.cfEngine.reset();
     this.trace = [];
   }
 
-  // Tambahkan fakta baru ke sistem
   addFact(name, value) {
     this.backward.addFact(name, value);
     this.trace.push(`Fakta baru: ${name} = ${value}`);
   }
 
-  // Tambahkan beberapa fakta sekaligus
   addFacts(facts) {
     this.backward.addFacts(facts);
     this.trace.push(`Fakta baru ditambahkan: ${JSON.stringify(facts)}`);
   }
 
-  // Jalankan backward chaining untuk mendapatkan diagnosa
   runDiagnosis(goal = "penyakit") {
-    // Reset CF engine
+
     this.cfEngine.reset();
     
-    // Jalankan backward chaining - Fixed: backwardEngine -> backward
     const bcResult = this.backward.backward(goal);
     this.trace.push(...this.backward.getInferenceTrace());
     
-    // Tidak ada hasil
     if (!bcResult) {
       this.trace.push(`Tidak dapat menentukan ${goal}`);
       return {
@@ -64,22 +58,18 @@ class SistemDiagnosa {
     };
   }
 
-  // Jalankan backward chaining untuk mendapatkan respon tubuh
   getResponTubuh() {
     return this.runDiagnosis("respon");
   }
 
-  // Jalankan backward chaining untuk mendapatkan etiologi
   getEtiologi() {
     return this.runDiagnosis("etiologi");
   }
 
-  // Jalankan backward chaining untuk mendapatkan penyakit
   getPenyakit() {
     return this.runDiagnosis("penyakit");
   }
 
-  // Jalankan proses diagnosa lengkap dari gejala awal hingga penyakit
   runCompleteDiagnosis(inputGejala) {
     // Reset sistem terlebih dahulu
     this.reset();
@@ -120,7 +110,6 @@ class SistemDiagnosa {
       };
     }
     
-    // Kembalikan hasil lengkap
     return {
       status: "complete",
       respon: responResult.result,
@@ -131,12 +120,10 @@ class SistemDiagnosa {
     };
   }
 
-  // Dapatkan atribut yang belum diketahui dan perlu ditanyakan
   getMissingAttributes() {
     return this.backward.missingAttributes;
   }
 
-  // Dapatkan trace eksekusi sistem
   getTrace() {
     return [...this.trace];
   }

@@ -7,20 +7,19 @@ const Step3 = ({ responTubuh, etiologiUmum, onRestart }) => {
     const [hasil, setHasil] = useState(null);
 
     const hitungDiagnosa = (etiologi, respon, medis) => {
-        // Membuat instance sistem pakar
+
         const sistemDiagnosa = new SistemDiagnosa();
         
-        // Tambahkan fakta-fakta yang sudah diketahui
+
         sistemDiagnosa.addFacts({
             etiologi: etiologi,
             respon: respon,
             medis: medis
         });
         
-        // Jalankan diagnosa dengan backward chaining
+
         const hasilDiagnosa = sistemDiagnosa.getPenyakit();
-        
-        // Format hasil untuk ditampilkan
+
         let hasilRules = [];
         
         if (hasilDiagnosa.result) {
