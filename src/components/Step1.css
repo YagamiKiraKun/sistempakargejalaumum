@@ -6,64 +6,96 @@
     padding: 20px;
     background-color: #efefef;
     width: 400px;
-    height: 400px;
+    height: auto;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
-    animation: slideIn 0.5s ease-in-out;
 }
 
-h2 {
-    font-size: 1.5em;
-    color: #2d3e50;
-    margin-bottom: 20px;
+.step1-header {
+    margin-bottom: 25px;
+    text-align: center;
 }
 
-/* Animasi untuk efek masuk */
-@keyframes slideIn {
-    0% {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.step-number {
+    display: inline-block;
+    background-color: #0064c8;
+    color: white;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    border-radius: 4px;
+    margin-right: 8px;
+    font-weight: bold;
 }
 
-/* Styling untuk form */
-form {
+.step-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #0064c8;
+}
+
+.form-container {
     margin-top: 20px;
 }
 
-label {
-    font-size: 1.1em;
-    color: #000000;
-    display: block;
-    margin: 10px 0 5px;
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
 }
 
-select {
-    padding: 8px;
-    font-size: 1em;
-    margin-bottom: 15px;
-    width: 100%;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #c6c6c6;
-    transition: all 0.3s ease-in-out;
+label {
+    display: block;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 8px;
     color: #333;
 }
 
+/* Critical Styling untuk Select */
+select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 2px solid #0064c8;
+    background-color: #bbdefb !important; /* Warna biru muda yang jelas dengan !important */
+    font-size: 16px;
+    color: #000 !important; /* Teks hitam dengan !important */
+    font-weight: 500;
+    cursor: pointer;
+    appearance: menulist;
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
+}
+
+select option {
+    background-color: #fff;
+    color: #000;
+    padding: 10px;
+}
+
+select option:first-child {
+    color: #666;
+}
+
+select:focus {
+    outline: none;
+    border-color: #0064c8;
+    box-shadow: 0 0 5px rgba(0, 100, 200, 0.5);
+}
+
 button {
-    padding: 10px 20px;
-    font-size: 1.1em;
+    width: 100%;
+    padding: 12px;
+    background-color: #0091ea;
     color: white;
-    background-color: #1f458c;
     border: none;
     border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background 0.3s ease;
 }
 
 button:disabled {
@@ -72,9 +104,5 @@ button:disabled {
 }
 
 button:hover:not(:disabled) {
-    background-color: #2f4172;
-}
-
-button:focus {
-    outline: none;
+    background-color: #0072b7;
 }

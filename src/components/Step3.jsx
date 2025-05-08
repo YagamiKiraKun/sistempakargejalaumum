@@ -1,28 +1,39 @@
 import React, { useState } from "react";
 import './Step3.css';
-
-const rules = [
-    { kondisi: (e, r, m) => e === "pernapasan" && r === "Langsung", penyakit: "ISPA", cf: 0.80 },
-    { kondisi: (e, r, m) => e === "pernapasan" && r === "Bertahap" && m === "self-heal", penyakit: "ISPA", cf: 0.85 },
-    { kondisi: (e, r, m) => e === "pernapasan" && r === "Bertahap" && m === "intensif", penyakit: "TBC", cf: 0.90 },
-    { kondisi: (e, r, m) => e === "sistemik" && m === "self-heal", penyakit: "Penyakit lain", cf: 0.75 },
-    { kondisi: (e, r, m) => e === "sistemik" && m === "intensif", penyakit: "DBD", cf: 0.85 },
-];
+import SistemDiagnosa from './SistemDiagnosa';
 
 const Step3 = ({ responTubuh, etiologiUmum, onRestart }) => {
     const [medis, setMedis] = useState("");
     const [hasil, setHasil] = useState(null);
 
     const hitungDiagnosa = (etiologi, respon, medis) => {
-        const hasilRules = rules
-            .filter(rule => rule.kondisi(etiologi, respon, medis))
-            .map(rule => ({ penyakit: rule.penyakit, cf: rule.cf }));
-
-        const hasilTerbaik = hasilRules.reduce((prev, curr) => (curr.cf > prev.cf ? curr : prev), { cf: 0 });
-
+        // Membuat instance sistem pakar
+        const sistemDiagnosa = new SistemDiagnosa();
+        
+        // Tambahkan fakta-fakta yang sudah diketahui
+        sistemDiagnosa.addFacts({
+            etiologi: etiologi,
+            respon: respon,
+            medis: medis
+        });
+        
+        // Jalankan diagnosa dengan backward chaining
+        const hasilDiagnosa = sistemDiagnosa.getPenyakit();
+        
+        // Format hasil untuk ditampilkan
+        let hasilRules = [];
+        
+        if (hasilDiagnosa.result) {
+            hasilRules.push({
+                penyakit: hasilDiagnosa.result.value,
+                cf: hasilDiagnosa.result.cf
+            });
+        }
+        
         return {
             hasilRules,
-            finalDiagnosis: hasilTerbaik,
+            finalDiagnosis: hasilRules.length > 0 ? hasilRules[0] : { penyakit: "Tidak dapat ditentukan", cf: 0 },
+            workingMemory: hasilDiagnosa.workingMemory || {}
         };
     };
 
@@ -55,19 +66,22 @@ const Step3 = ({ responTubuh, etiologiUmum, onRestart }) => {
                 </form>
             ) : (
                 <div className="highlight-diagnosis">
-                    <h3 className="highlight-title">🔍 Hasil Diagnosa Berdasarkan Certainty Factor:</h3>
+                    <h3 className="highlight-title">🔍 Hasil Diagnosa Berdasarkan Backward Chaining dan Certainty Factor:</h3>
                     <ul>
                         {hasil.hasilRules.map((h, i) => (
                             <li key={i}>
-                                {h.penyakit} (CF: {h.cf})
+                                {h.penyakit} (CF: {h.cf.toFixed(2)})
                             </li>
                         ))}
                     </ul>
                     <h3 className="highlight-title">📌 Diagnosa Utama:</h3>
                     <div className="diagnosis-box">
-                        {hasil.finalDiagnosis.penyakit} (CF: {hasil.finalDiagnosis.cf})
+                        {hasil.finalDiagnosis.penyakit} (CF: {hasil.finalDiagnosis.cf.toFixed(2)})
                     </div>
-                    <button onClick={onRestart} className="restart-btn">🔄 Kembali ke Home</button>
+                    
+                    <div className="controls">
+                        <button onClick={onRestart} className="restart-btn">🔄 Kembali ke Home</button>
+                    </div>
                 </div>
             )}
         </div>
