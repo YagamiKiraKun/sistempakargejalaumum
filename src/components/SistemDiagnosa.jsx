@@ -1,131 +1,151 @@
-import { Backward } from './Backward';
-import { CertaintyFactor } from './CertaintyFactor';
-import rules from './rules';
-
 class SistemDiagnosa {
   constructor() {
-    this.backward = new Backward(rules);
-    this.cfEngine = new CertaintyFactor();
-    this.trace = []; 
+      this.facts = {};
+      this.workingMemory = [];
+      this.steps = [];
+      
+      // Define rules with Certainty Factor
+      this.rules = [
+          { 
+              id: 1, 
+              premise: [
+                  { attr: 'etiologi', value: 'pernapasan' },
+                  { attr: 'respon', value: 'Langsung' }
+              ],
+              conclusion: { attr: 'penyakit_umum', value: 'ISPA' },
+              cf: 0.80
+          },
+          { 
+              id: 2, 
+              premise: [
+                  { attr: 'etiologi', value: 'pernapasan' },
+                  { attr: 'respon', value: 'Bertahap' },
+                  { attr: 'medis', value: 'self-heal' }
+              ],
+              conclusion: { attr: 'penyakit_umum', value: 'ISPA' },
+              cf: 0.85
+          },
+          { 
+              id: 3, 
+              premise: [
+                  { attr: 'etiologi', value: 'pernapasan' },
+                  { attr: 'respon', value: 'Bertahap' },
+                  { attr: 'medis', value: 'intensif' }
+              ],
+              conclusion: { attr: 'penyakit_umum', value: 'TBC' },
+              cf: 0.90
+          },
+          { 
+              id: 4, 
+              premise: [
+                  { attr: 'etiologi', value: 'sistemik' },
+                  { attr: 'medis', value: 'self-heal' }
+              ],
+              conclusion: { attr: 'penyakit_umum', value: 'Penyakit lain' },
+              cf: 0.75
+          },
+          { 
+              id: 5, 
+              premise: [
+                  { attr: 'etiologi', value: 'sistemik' },
+                  { attr: 'medis', value: 'intensif' }
+              ],
+              conclusion: { attr: 'penyakit_umum', value: 'DBD' },
+              cf: 0.85
+          }
+      ];
   }
-
-  reset() {
-    this.backward.reset();
-    this.cfEngine.reset();
-    this.trace = [];
-  }
-
-  addFact(name, value) {
-    this.backward.addFact(name, value);
-    this.trace.push(`Fakta baru: ${name} = ${value}`);
-  }
-
+  
+  // Add facts to the knowledge base
   addFacts(facts) {
-    this.backward.addFacts(facts);
-    this.trace.push(`Fakta baru ditambahkan: ${JSON.stringify(facts)}`);
+      this.facts = { ...this.facts, ...facts };
+      
+      // Convert facts to working memory with default CF
+      Object.keys(facts).forEach(key => {
+          this.workingMemory.push({
+              attr: key,
+              value: facts[key],
+              cf: 0.8 // Default CF for user inputs
+          });
+          
+          this.steps.push(`Fakta awal: ${key} = ${facts[key]} (CF = 0.8)`);
+      });
   }
-
-  runDiagnosis(goal = "penyakit") {
-
-    this.cfEngine.reset();
-    
-    const bcResult = this.backward.backward(goal);
-    this.trace.push(...this.backward.getInferenceTrace());
-    
-    if (!bcResult) {
-      this.trace.push(`Tidak dapat menentukan ${goal}`);
-      return {
-        result: null,
-        trace: this.trace,
-        missingAttributes: this.backward.missingAttributes
-      };
-    }
-    
-    // Dapatkan rule yang difire
-    const firedRule = bcResult.rule;
-    
-    // Hitung CF untuk rule yang difire
-    const cf = this.cfEngine.processRule(firedRule);
-    this.trace.push(...this.cfEngine.getTrace());
-    
-    return {
-      result: {
-        value: bcResult.value,
-        cf: cf
-      },
-      trace: this.trace,
-      workingMemory: this.backward.getWorkingMemory()
-    };
-  }
-
-  getResponTubuh() {
-    return this.runDiagnosis("respon");
-  }
-
-  getEtiologi() {
-    return this.runDiagnosis("etiologi");
-  }
-
+  
+  // Get final diagnosis using backward chaining
   getPenyakit() {
-    return this.runDiagnosis("penyakit");
-  }
-
-  runCompleteDiagnosis(inputGejala) {
-    // Reset sistem terlebih dahulu
-    this.reset();
-    
-    // Tambahkan semua fakta yang diberikan
-    this.addFacts(inputGejala);
-    
-    // 1. Dapatkan respon tubuh
-    const responResult = this.getResponTubuh();
-    if (!responResult.result) {
+      this.steps.push("Memulai backward chaining untuk diagnosa penyakit");
+      this.steps.push("Goal: penyakit_umum");
+      
+      // Checking each rule to see if it matches our facts
+      for (const rule of this.rules) {
+          this.steps
+              .push(`Memeriksa Rule ${rule.id}: IF ${rule.premise.map(p => `${p.attr} = ${p.value}`).join(' AND ')} THEN ${rule.conclusion.attr} = ${rule.conclusion.value} (CF = ${rule.cf})`);
+          
+          // Check if all premises match
+          let allMatch = true;
+          const cfValues = [];
+          
+          for (const premise of rule.premise) {
+              const fact = this.facts[premise.attr];
+              
+              if (fact === premise.value) {
+                  // Find CF value from working memory
+                  const wmFact = this.workingMemory.find(f => 
+                      f.attr === premise.attr && f.value === premise.value);
+                  
+                  const cfValue = wmFact ? wmFact.cf : 0.8; // Default if not found
+                  cfValues.push(cfValue);
+                  
+                  this.steps.push(`  ✓ Premis ${premise.attr} = ${premise.value} cocok (CF = ${cfValue.toFixed(2)})`);
+              } else {
+                  allMatch = false;
+                  this.steps.push(`  ✗ Premis ${premise.attr} = ${premise.value} tidak cocok dengan fakta ${premise.attr} = ${fact || 'tidak ada'}`);
+                  break;
+              }
+          }
+          
+          // If all premises match, add conclusion to working memory
+          if (allMatch) {
+              // Calculate CF using min-max method
+              const minCF = Math.min(...cfValues);
+              const ruleCF = minCF * rule.cf;
+              
+              this.steps.push(`  Rule ${rule.id} fired! Menghitung CF: MIN(${cfValues.map(v => v.toFixed(2)).join(', ')}) * ${rule.cf} = ${ruleCF.toFixed(2)}`);
+              
+              // Add conclusion to working memory
+              this.workingMemory.push({
+                  attr: rule.conclusion.attr,
+                  value: rule.conclusion.value,
+                  cf: ruleCF
+              });
+              
+              this.steps.push(`  Menambahkan ${rule.conclusion.attr} = ${rule.conclusion.value} (CF = ${ruleCF.toFixed(2)}) ke working memory`);
+              
+              // Return result if it's a penyakit_umum conclusion
+              if (rule.conclusion.attr === 'penyakit_umum') {
+                  this.steps.push(`Diagnosa final: ${rule.conclusion.value} dengan CF = ${ruleCF.toFixed(2)}`);
+                  
+                  return {
+                      result: {
+                          value: rule.conclusion.value,
+                          cf: ruleCF
+                      },
+                      workingMemory: this.workingMemory,
+                      steps: this.steps
+                  };
+              }
+          }
+      }
+      
+      this.steps.push("Tidak ada rule yang cocok dengan fakta-fakta yang ada.");
+      
+      // If no matching rule found
       return {
-        status: "incomplete",
-        message: "Tidak dapat menentukan respon tubuh",
-        missingAttributes: responResult.missingAttributes,
-        trace: this.trace
+          result: null,
+          workingMemory: this.workingMemory,
+          steps: this.steps
       };
-    }
-    
-    // 2. Dapatkan etiologi
-    const etiologiResult = this.getEtiologi();
-    if (!etiologiResult.result) {
-      return {
-        status: "incomplete",
-        message: "Tidak dapat menentukan etiologi",
-        missingAttributes: etiologiResult.missingAttributes,
-        trace: this.trace
-      };
-    }
-    
-    // 3. Dapatkan diagnosa penyakit
-    const penyakitResult = this.getPenyakit();
-    if (!penyakitResult.result) {
-      return {
-        status: "incomplete",
-        message: "Tidak dapat menentukan penyakit",
-        missingAttributes: penyakitResult.missingAttributes,
-        trace: this.trace
-      };
-    }
-    
-    return {
-      status: "complete",
-      respon: responResult.result,
-      etiologi: etiologiResult.result,
-      penyakit: penyakitResult.result,
-      workingMemory: penyakitResult.workingMemory,
-      trace: this.trace
-    };
-  }
-
-  getMissingAttributes() {
-    return this.backward.missingAttributes;
-  }
-
-  getTrace() {
-    return [...this.trace];
   }
 }
 
